@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  catalog-api:
+    hostname: "shop-catalog"
+    network_mode: "host"
+    build: ./Services/Catalog/Catalog.Api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - BASE_PATH=${BASE_PATH}

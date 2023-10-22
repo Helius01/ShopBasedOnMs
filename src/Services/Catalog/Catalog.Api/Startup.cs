@@ -17,7 +17,7 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
-        var basePath = Configuration["BasePath"];
+        var basePath = Configuration["BASE_PATH"];
 
         if (basePath is null)
         {
