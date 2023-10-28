@@ -1,6 +1,16 @@
 version: '3.4'
 
 services:
+  catalog-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - SA_PASSWORD=$CATALOG_DB_PASSWORD
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - shop_based_on_ms-catalog-db:/var/opt/mssql
+
   catalog-api:
     build:
       context: .
@@ -11,3 +21,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - BASE_PATH=/catalog-api
+      - ConnectionStrings__SqlServer=$CATALOG_DB_CONNECTION_STRING
+    depends_on:
+      - catalog-db
+
+volumes:
+  shop_based_on_ms-catalog-db:
+    external: false
