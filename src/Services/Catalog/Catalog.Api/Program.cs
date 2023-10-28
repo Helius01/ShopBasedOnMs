@@ -1,11 +1,49 @@
-using ShopBasedOnMs.Services.Catalog.CatalogApi;
+using System.Data.SqlClient;
+using Polly;
+using Serilog;
 using ShopBasedOnMs.BuildingBlocks.Logging.Extensions;
+using ShopBasedOnMs.Services.Catalog.CatalogApi;
+using ShopBasedOnMs.Services.Catalog.CatalogApi.Infrastructure;
 
 var configuration = GetConfiguration();
 
-var host = CreateHostBuilder(configuration, Environment.GetCommandLineArgs());
+try
+{
+    var host = CreateHostBuilder(configuration, Environment.GetCommandLineArgs());
+    Log.Information("Configuring web host ({ApplicationContext})...", AppName);
+    Log.Information("Applying migrations ({ApplicationContext})...", AppName);
 
-host.Run();
+    // Migration
+    using (var scope = host.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<CatalogContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<CatalogContextSeed>>();
+
+        var retry = Policy.Handle<SqlException>()
+                             .WaitAndRetry(new TimeSpan[]
+                             {
+                                TimeSpan.FromSeconds(3),
+                                TimeSpan.FromSeconds(5),
+                                TimeSpan.FromSeconds(8),
+                             });
+
+        retry.Execute(() =>
+        {
+            new CatalogContextSeed().MigrateAndSeedAsync(context, logger).Wait();
+        });
+    }
+
+    Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
+    host.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 static IConfiguration GetConfiguration()
 {
@@ -30,3 +68,14 @@ IHost CreateHostBuilder(IConfiguration configuration, string[] args) =>
         })
         .UseCustomSerilog()
         .Build();
+
+/// <summary>
+/// A part of Program class that carry some properties
+/// </summary>
+public partial class Program
+{
+    /// <summary>
+    /// The name of App.The value is used in logs
+    /// </summary>
+    private const string AppName = "Catalog.Api";
+}

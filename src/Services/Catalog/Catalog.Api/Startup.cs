@@ -1,30 +1,53 @@
+using Microsoft.EntityFrameworkCore;
+using ShopBasedOnMs.Services.Catalog.CatalogApi.Extensions;
+
 namespace ShopBasedOnMs.Services.Catalog.CatalogApi;
 
+/// <summary>
+/// Startup
+/// </summary>
 public class Startup
 {
+    /// <summary>
+    /// Configuration
+    /// </summary>
+    /// <value></value>
     public IConfiguration Configuration { get; set; }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="configuration"></param>
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
     }
 
+
+    /// <summary>
+    /// Configure and Register services (DI)
+    /// </summary>
+    /// <param name="services"></param>
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddCustomMVC(Configuration);
-        services.AddSwagger(Configuration);
+        services.AddCustomMvc();
+        services.AddSwagger();
+        services.AddCustomDbContext(new(Configuration.GetConnectionString("SqlServer")!));
     }
 
-    public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+    /// <summary>
+    /// Configuring middlewares and etc.
+    /// </summary>
+    /// <param name="app"></param>
+    public void Configure(IApplicationBuilder app)
     {
         var basePath = Configuration["BASE_PATH"];
 
         if (basePath is null)
         {
-            throw new ArgumentNullException(nameof(basePath));
+            throw new ArgumentNullException("The argument can't be null at this point", nameof(basePath));
         }
 
-        loggerFactory.CreateLogger<Startup>().LogDebug("Using BasePath '{basePath}'", basePath);
         app.UsePathBase(basePath);
 
         app.UseSwagger()
@@ -40,41 +63,5 @@ public class Startup
             endpoints.MapDefaultControllerRoute();
             endpoints.MapControllers();
         });
-    }
-}
-
-public static class CustomExtensions
-{
-    public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddControllers()
-                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("CorsPolicy", builder => builder
-                                                    .SetIsOriginAllowed((host) => true)
-                                                    .AllowAnyMethod()
-                                                    .AllowAnyHeader()
-                                                    .AllowCredentials());
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-            {
-                Title = "ShopBasedOnMs - Catalog HTTP API",
-                Version = "v1",
-                Description = "The Catalog microservice HTTP-API"
-            });
-        });
-
-
-        return services;
     }
 }
