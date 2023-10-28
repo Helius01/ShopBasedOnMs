@@ -1,4 +1,5 @@
 using ShopBasedOnMs.Services.Catalog.CatalogApi;
+using ShopBasedOnMs.BuildingBlocks.Logging.Extensions;
 
 var configuration = GetConfiguration();
 
@@ -27,4 +28,5 @@ IHost CreateHostBuilder(IConfiguration configuration, string[] args) =>
             .UseWebRoot("Pics")
             .ConfigureAppConfiguration(x => x.AddConfiguration(configuration));
         })
+        .UseCustomSerilog()
         .Build();
