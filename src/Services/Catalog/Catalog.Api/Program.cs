@@ -1,5 +1,6 @@
 using System.Data.SqlClient;
 using Polly;
+using Polly.Contrib.WaitAndRetry;
 using Serilog;
 using ShopBasedOnMs.BuildingBlocks.Logging.Extensions;
 using ShopBasedOnMs.Services.Catalog.CatalogApi;
@@ -19,13 +20,9 @@ try
         var context = scope.ServiceProvider.GetRequiredService<CatalogContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<CatalogContextSeed>>();
 
-        var retry = Policy.Handle<SqlException>()
-                             .WaitAndRetry(new TimeSpan[]
-                             {
-                                TimeSpan.FromSeconds(3),
-                                TimeSpan.FromSeconds(5),
-                                TimeSpan.FromSeconds(8),
-                             });
+        var delay = Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5);
+        
+        var retry = Policy.Handle<SqlException>().WaitAndRetry(delay);
 
         retry.Execute(() =>
         {
