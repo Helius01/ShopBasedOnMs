@@ -4,14 +4,23 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Data.SqlClient" version="4.8.2" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" />
+	  <PackageReference Include="Polly" Version="7.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Logging\Logging.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\TypeProvider\TypeProvider.csproj" />
   </ItemGroup>
 
 </Project>
