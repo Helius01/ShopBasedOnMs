@@ -9,6 +9,7 @@ WORKDIR /src
 COPY ["ShopBasedOnMs.sln", "ShopBasedOnMs.sln"]
 COPY ["Services/Catalog/Catalog.Api/Catalog.Api.csproj", "Services/Catalog/Catalog.Api/"]
 COPY ["BuildingBlocks/Logging/Logging.csproj", "BuildingBlocks/Logging/"]
+COPY ["BuildingBlocks/TypeProvider/TypeProvider.csproj", "BuildingBlocks/TypeProvider/"]
 COPY "NuGet.config" "NuGet.config"
 
 RUN dotnet restore "ShopBasedOnMs.sln"
