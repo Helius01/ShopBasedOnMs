@@ -1,10 +1,13 @@
-version: '3'
+version: '3.4'
 
 services:
   catalog-api:
-    hostname: "shop-catalog"
-    network_mode: "host"
-    build: ./Services/Catalog/Catalog.Api
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.Api/dockerfile
+    ports:
+      - "5000:80"
+      - "5001:443"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - BASE_PATH=${BASE_PATH}
+      - BASE_PATH=/catalog-api
