@@ -21,7 +21,7 @@ try
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<CatalogContextSeed>>();
 
         var delay = Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5);
-        
+
         var retry = Policy.Handle<SqlException>().WaitAndRetry(delay);
 
         retry.Execute(() =>

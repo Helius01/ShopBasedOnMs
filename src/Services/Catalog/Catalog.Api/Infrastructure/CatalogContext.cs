@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using ShopBasedOnMs.Services.Catalog.CatalogApi.Domain.Entities;
+using ShopBasedOnMs.Services.Catalog.CatalogApi.Domain.AggregatesModel;
 using ShopBasedOnMs.Services.Catalog.CatalogApi.Infrastructure.EntityConfiguration;
 
 namespace ShopBasedOnMs.Services.Catalog.CatalogApi.Infrastructure;
