@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: Services/Catalog/Catalog.Api/dockerfile
     ports:
-      - "5000:80"
+      - "5002:80"
       - "5001:443"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
