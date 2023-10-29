@@ -6,10 +6,7 @@ public readonly record struct ConnectionString
 
     public ConnectionString(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("The value can't be null or empty as connection string", nameof(value));
-        }
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
 
         Value = value;
     }
