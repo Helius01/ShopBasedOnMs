@@ -69,6 +69,7 @@ public class CatalogItem : Entity, IAggregateRoot
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new CatalogDomainException($"Invalid catalog-item name = ({name})");
+        
         _name = name;
     }
 
